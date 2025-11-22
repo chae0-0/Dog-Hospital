@@ -1,8 +1,8 @@
 from django.contrib import admin
-
 from django.contrib import admin
-# models.py에 있는 모든 클래스를 가져온다는 뜻입니다.
-from .models import * # 1. 기초 정보 등록
+from .models import * 
+
+# 1. 기초 정보 등록
 admin.site.register(Owner)
 admin.site.register(Breed)
 admin.site.register(Status)
