@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>병원 대시보드</title>
+    <style>
+        /* 간단한 스타일 꾸미기 */
+        .dashboard-container { display: flex; gap: 20px; }
+        .card { 
+            border: 1px solid #ddd; 
+            padding: 20px; 
+            border-radius: 8px; 
+            background-color: #f9f9f9; 
+            width: 200px;
+            text-align: center;
+        }
+        .card h3 { margin: 0 0 10px 0; color: #555; }
+        .card p { font-size: 24px; font-weight: bold; margin: 0; color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <h1>📊 병원 현황 대시보드</h1>
+    
+    <p>
+        <a href="{% url 'animal_list' %}">⬅️ 동물 목록으로 가기</a>
+    </p>
+
+    <div class="dashboard-container">
+        <div class="card">
+            <h3>🐶 전체 동물 수</h3>
+            <p>{{ total_animals }} 마리</p>
+        </div>
+        <div class="card">
+            <h3>📋 오늘 진료 건수</h3>
+            <p>{{ today_records }} 건</p>
+        </div>
+        <div class="card">
+            <h3>💰 총 매출액</h3>
+            <p>{{ total_revenue }} 원</p>
+        </div>
+    </div>
+</body>
+</html>
