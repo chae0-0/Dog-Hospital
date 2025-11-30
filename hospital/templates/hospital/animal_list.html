@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>동물 병원 관리 시스템</title>
+</head>
+<body>
+    <h1>🐾 입원/진료 동물 목록</h1>
+    <div style="margin-bottom: 20px;">
+    <a href="{% url 'dashboard' %}">📊 대시보드 보기</a> | 
+    <a href="{% url 'animal_create' %}">➕ 새 동물 등록하기</a>
+</div>
+<hr>
+    <ul>
+        {% for animal in animals %}
+            <li>
+                <a href="{% url 'animal_detail' animal.animal_id %}">
+                    <b>{{ animal.name }}</b> ({{ animal.breed.breed_name }})
+                </a>
+                - 보호자: {{ animal.owner.name }}
+                - 상태: {{ animal.status.status_name }}
+            </li>
+        {% empty %}
+            <li>등록된 동물이 없습니다. Admin에서 추가해주세요!</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
