@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Count, Sum, Q
 from datetime import date
-from .models import Animal, MedicalRecord
+# 1. 모델 import 부분에 상세 내역 모델들을 추가해야 합니다!
+from .models import Animal, MedicalRecord, MedicationDetail, VaccinationDetail, TreatmentDetail
 from .forms import AnimalForm
 
 #1. 동물 목록 조회
@@ -48,3 +49,28 @@ def animal_create(request):
         form = AnimalForm()
     
     return render(request, 'hospital/animal_form.html', {'form': form})
+
+
+# 5. 약물 정보 상세 뷰
+def animal_medication(request, animal_id):
+    animal = get_object_or_404(Animal, pk=animal_id)
+    # record__animal=animal : "진료기록(record)의 동물(animal)이 이 친구인 것"을 찾으라는 뜻입니다.
+    medications = MedicationDetail.objects.filter(record__animal=animal).order_by('-record__visit_date')
+
+    return render(request, 'hospital/animal_medication.html', {'animal': animal, 'medications': medications})
+
+
+# 6. 접종 정보 상세 뷰
+def animal_vaccination(request, animal_id):
+    animal = get_object_or_404(Animal, pk=animal_id)
+    vaccinations = VaccinationDetail.objects.filter(record__animal=animal).order_by('-vac_date')
+
+    return render(request, 'hospital/animal_vaccination.html', {'animal': animal, 'vaccinations': vaccinations})
+
+
+# 7. 치료 정보 상세 뷰
+def animal_treatment(request, animal_id):
+    animal = get_object_or_404(Animal, pk=animal_id)
+    treatments = TreatmentDetail.objects.filter(record__animal=animal).order_by('-treat_date')
+
+    return render(request, 'hospital/animal_treatment.html', {'animal': animal, 'treatments': treatments})

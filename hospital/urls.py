@@ -8,4 +8,8 @@ urlpatterns = [
     path('animal/<int:animal_id>/', views.animal_detail, name='animal_detail'),
     path('dashboard/', views.dashboard, name='dashboard'),      # 대시보드 주소
     path('add/', views.animal_create, name='animal_create'),    # 등록 주소
+
+path('animal/<int:animal_id>/medication/', views.animal_medication, name='animal_medication'),
+    path('animal/<int:animal_id>/vaccination/', views.animal_vaccination, name='animal_vaccination'),
+    path('animal/<int:animal_id>/treatment/', views.animal_treatment, name='animal_treatment'),
 ]
