@@ -25,7 +25,7 @@
             <h1>Animal Hospital DB System</h1>
             <span style="font-size: 12px; color: #555;">동물병원 관리 데이터베이스 시스템</span>
         </div>
-        <a href="/hospital/" class="home-link">Home</a>
+       <a href="{% url 'animal_list' %}" class="home-link">Home</a>
     </header>
 
     <div class="page-title">{{ animal.name }} 접종 정보</div>
