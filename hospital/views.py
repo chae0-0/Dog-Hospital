@@ -1,7 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Count, Sum, Q
 from datetime import date
-# 1. 모델 import 부분에 상세 내역 모델들을 추가해야 합니다!
 from .models import Animal, MedicalRecord, MedicationDetail, VaccinationDetail, TreatmentDetail
 from .forms import AnimalForm
 
@@ -18,7 +17,7 @@ def animal_list(request):
     
     return render(request, 'hospital/animal_list.html', {'animals': animals})
 
-#2. 동물 상세 조회 (그대로 두세요!)
+#2. 동물 상세 조회
 def animal_detail(request, animal_id):
     animal = get_object_or_404(Animal, pk=animal_id)
     return render(request, 'hospital/animal_detail.html', {'animal': animal})
@@ -54,7 +53,6 @@ def animal_create(request):
 # 5. 약물 정보 상세 뷰
 def animal_medication(request, animal_id):
     animal = get_object_or_404(Animal, pk=animal_id)
-    # record__animal=animal : "진료기록(record)의 동물(animal)이 이 친구인 것"을 찾으라는 뜻입니다.
     medications = MedicationDetail.objects.filter(record__animal=animal).order_by('-record__visit_date')
 
     return render(request, 'hospital/animal_medication.html', {'animal': animal, 'medications': medications})
