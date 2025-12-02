@@ -1,27 +1,106 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-    <title>동물 병원 관리 시스템</title>
+    <meta charset="UTF-8">
+    <title>Animal Hospital DB System</title>
+    <style>
+        body {
+            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+            margin: 0; padding: 0;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; background-color: #ffffff;
+        }
+        .container { width: 80%; max-width: 1000px; text-align: center; }
+        header { text-align: left; margin-bottom: 60px; }
+        header h1 { font-size: 32px; font-weight: 900; margin: 0; }
+        header p { font-size: 14px; color: #555; margin-top: 5px; }
+
+        /* 검색창 영역 */
+        .search-section {
+            display: flex; justify-content: center; align-items: center;
+            margin-bottom: 30px; gap: 10px;
+        }
+        .search-label { font-weight: bold; margin-right: 10px; }
+        .search-input {
+            width: 300px; padding: 8px;
+            background-color: #e0e0e0; border: none; outline: none;
+        }
+        .search-btn {
+            padding: 8px 20px; background-color: #ffffff;
+            border: 1px solid #000; cursor: pointer; font-weight: bold;
+        }
+        .search-btn:hover { background-color: #f0f0f0; }
+
+        /* 결과 영역 */
+        .result-container {
+            background-color: #e0e0e0; padding: 40px;
+            border-radius: 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .list-title { margin-bottom: 20px; font-weight: bold; }
+        .result-table { width: 100%; border-collapse: collapse; text-align: center; }
+        .result-table th { padding: 10px; font-size: 14px; border-bottom: 1px solid #ccc; }
+        .result-table td { padding: 20px 10px; font-size: 14px; }
+        .view-btn {
+            padding: 5px 15px; background-color: #e0e0e0; border: 1px solid #000;
+            text-decoration: none; color: black; font-size: 12px;
+            cursor: pointer; display: inline-block;
+        }
+        .view-btn:hover { background-color: #d0d0d0; }
+    </style>
 </head>
 <body>
-    <h1>🐾 입원/진료 동물 목록</h1>
-    <div style="margin-bottom: 20px;">
-    <a href="{% url 'dashboard' %}">📊 대시보드 보기</a> | 
-    <a href="{% url 'animal_create' %}">➕ 새 동물 등록하기</a>
+
+<div class="container">
+    <header>
+        <h1>Animal Hospital DB System</h1>
+        <p>동물병원 관리 데이터베이스 시스템</p>
+    </header>
+
+    <div class="search-section">
+        <span class="search-label">이름으로 찾기</span>
+        <form method="get" style="display: flex; gap: 10px;">
+            <input type="text" name="q" class="search-input" placeholder="동물 이름 검색" value="{{ request.GET.q|default:'' }}">
+            <button type="submit" class="search-btn">조회</button>
+        </form>
+       <a href="{% url 'animal_create' %}" class="search-btn" style="text-decoration: none; line-height: 1.5;">+ 등록</a>
+    </div>
+
+    <div class="list-title">반려동물 목록</div>
+
+    <div class="result-container">
+        <table class="result-table">
+            <thead>
+            <tr>
+                <th>이름</th>
+                <th>품종</th>
+                <th>보호자</th>
+                <th>상태</th>
+                <th>약물 정보</th>
+                <th>접종 정보</th>
+                <th>치료 정보</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for animal in animals %}
+            <tr>
+                <td>{{ animal.name }}</td>
+                <td>{{ animal.breed }}</td>
+                <td>{{ animal.owner }}</td>
+                <td>{{ animal.status }}</td>
+
+                <td><a href="{% url 'animal_medication' animal.animal_id %}" class="view-btn">열람</a></td>
+                <td><a href="{% url 'animal_vaccination' animal.animal_id %}" class="view-btn">열람</a></td>
+                <td><a href="{% url 'animal_treatment' animal.animal_id %}" class="view-btn">열람</a></td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">등록된 동물이 없습니다.</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
-<hr>
-    <ul>
-        {% for animal in animals %}
-            <li>
-                <a href="{% url 'animal_detail' animal.animal_id %}">
-                    <b>{{ animal.name }}</b> ({{ animal.breed.breed_name }})
-                </a>
-                - 보호자: {{ animal.owner.name }}
-                - 상태: {{ animal.status.status_name }}
-            </li>
-        {% empty %}
-            <li>등록된 동물이 없습니다. Admin에서 추가해주세요!</li>
-        {% endfor %}
-    </ul>
+
 </body>
 </html>

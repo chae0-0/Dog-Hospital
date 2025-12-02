@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>약물 정보 - Animal Hospital</title>
+    <style>
+        body { font-family: 'Malgun Gothic', sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; background-color: #fff; }
+        .container { width: 90%; max-width: 1000px; }
+        header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 40px; }
+        header h1 { margin: 0; font-size: 32px; font-weight: 900; }
+        header .home-link { text-decoration: underline; color: black; font-weight: bold; font-size: 14px; }
+        .page-title { font-size: 24px; font-weight: bold; margin-bottom: 20px; }
+        .grey-container { background-color: #e0e0e0; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .info-header { display: flex; justify-content: space-around; padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid #aaa; font-size: 22px; font-weight: bold; }
+        .white-box { background-color: #fff; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+        table { width: 100%; text-align: center; border-collapse: collapse; }
+        th { padding: 15px; font-size: 14px; font-weight: bold; border-bottom: 1px solid #ddd; white-space: nowrap; }
+        td { padding: 15px; font-size: 14px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <div>
+            <h1>Animal Hospital DB System</h1>
+            <span style="font-size: 12px; color: #555;">동물병원 관리 데이터베이스 시스템</span>
+        </div>
+        <a href="/hospital/" class="home-link">Home</a>
+    </header>
+
+    <div class="page-title">{{ animal.name }} 약물 정보</div>
+
+    <div class="grey-container">
+        <div class="info-header">
+            <span>보호자 : {{ animal.owner }}</span>
+            <span>품종 : {{ animal.breed }}</span>
+        </div>
+
+        <div class="white-box">
+            <table>
+                <thead>
+                <tr>
+                    <th>약품명</th>
+                    <th>제조사</th>
+                    <th>유통기한</th>
+                    <th>재고수량</th>
+                    <th>복용량</th>
+                    <th>복용기간</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for med in medications %}
+                <tr>
+                    <td>{{ med.medication.med_name }}</td>
+                    <td>{{ med.medication.manufacturer }}</td>
+                    <td>{{ med.medication.expiry_date }}</td>
+                    <td>{{ med.medication.stock_qty }}</td>
+                    <td>{{ med.dosage }}</td>
+                    <td>{{ med.duration }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6">처방된 약물 정보가 없습니다.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
