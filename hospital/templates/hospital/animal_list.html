@@ -59,7 +59,7 @@
     <div class="search-section">
         <span class="search-label">이름으로 찾기</span>
         <form method="get" style="display: flex; gap: 10px;">
-            <input type="text" name="q" class="search-input" placeholder="동물 이름 검색" value="{{ request.GET.q|default:'' }}">
+            <input type="text" name="search" class="search-input" placeholder="동물 이름 검색" value="{{ request.GET.search|default:'' }}">
             <button type="submit" class="search-btn">조회</button>
         </form>
        <a href="{% url 'animal_create' %}" class="search-btn" style="text-decoration: none; line-height: 1.5;">+ 등록</a>
