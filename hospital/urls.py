@@ -2,14 +2,20 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.animal_list, name='animal_list'),
-    
-    # 동물 상세 페이지
-    path('animal/<int:animal_id>/', views.animal_detail, name='animal_detail'),
-    path('dashboard/', views.dashboard, name='dashboard'),      # 대시보드 주소
-    path('add/', views.animal_create, name='animal_create'),    # 등록 주소
+    # 1. 대시보드
+    path('', views.dashboard, name='dashboard'),
 
-path('animal/<int:animal_id>/medication/', views.animal_medication, name='animal_medication'),
-    path('animal/<int:animal_id>/vaccination/', views.animal_vaccination, name='animal_vaccination'),
-    path('animal/<int:animal_id>/treatment/', views.animal_treatment, name='animal_treatment'),
+    # 2. 접수/원무
+    path('reception/', views.reception_index, name='reception_index'),
+    path('reception/register/', views.register_new_patient, name='register_new_patient'),
+    path('appointment/<int:appointment_id>/checkin/', views.check_in, name='check_in'),
+
+    # 3. 진료실
+    path('consultation/<int:appointment_id>/', views.consultation_room, name='consultation_room'),
+    
+    # 4. 재고
+    path('inventory/', views.inventory_list, name='inventory_list'),
+    
+    # 5. 수납
+    path('billing/<int:record_id>/', views.billing_process, name='billing_process'),
 ]
