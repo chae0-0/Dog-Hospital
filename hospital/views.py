@@ -126,3 +126,10 @@ def billing_process(request, record_id):
         return redirect('dashboard')
         
     return render(request, 'hospital/billing.html', {'record': record, 'total_cost': total_cost})
+
+    # hospital/views.py
+
+def animal_list(request):
+    # 모든 동물 데이터를 가져와서 보여주는 뷰
+    animals = Animal.objects.all().order_by('-id')
+    return render(request, 'hospital/new_list.html', {'animals': animals})

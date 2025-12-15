@@ -9,6 +9,8 @@ urlpatterns = [
     path('reception/', views.reception_index, name='reception_index'),
     path('reception/register/', views.register_new_patient, name='register_new_patient'),
     path('appointment/<int:appointment_id>/checkin/', views.check_in, name='check_in'),
+    path('animals/', views.animal_list, name='animal_list'),
+
 
     # 3. 진료실
     path('consultation/<int:appointment_id>/', views.consultation_room, name='consultation_room'),
