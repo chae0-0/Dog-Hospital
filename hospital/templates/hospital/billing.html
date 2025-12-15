@@ -2,85 +2,106 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>진료비 수납</title>
+    <title>진료비 명세서</title>
     <style>
         body { font-family: 'Pretendard', sans-serif; background: #e0e5ec; height: 100vh; display: flex; justify-content: center; align-items: center; margin: 0; }
 
-        .invoice-box { background: white; width: 400px; padding: 40px; border-radius: 4px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border-top: 5px solid #2c3e50; }
+        .invoice-box { background: white; width: 420px; padding: 40px; border-radius: 4px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border-top: 6px solid #2c3e50; }
 
-        .header { text-align: center; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
-        .header h2 { margin: 0; font-size: 20px; color: #2c3e50; letter-spacing: 1px; }
-        .date { font-size: 13px; color: #888; margin-top: 8px; }
 
-        .info-group { margin-bottom: 20px; }
-        .row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; }
-        .label { color: #888; }
-        .value { font-weight: 600; color: #333; }
+        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 20px; }
+        .header h2 { margin: 0; font-size: 22px; color: #2c3e50; letter-spacing: -0.5px; font-weight: 800; }
+        .date { font-size: 13px; color: #888; margin-top: 8px; font-family: 'Consolas', monospace; }
 
-        .divider { border-top: 1px dashed #ddd; margin: 20px 0; }
+        .info-group { margin-bottom: 25px; padding: 15px; background: #f9f9f9; border-radius: 4px; }
+        .row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
+        .row:last-child { margin-bottom: 0; }
+        .label { color: #888; font-weight: 500; }
+        .value { font-weight: 700; color: #333; }
 
-        .items { margin-bottom: 20px; }
-        .item-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
 
-        .total-area { background: #f8f9fa; padding: 20px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
-        .total-label { font-weight: 700; color: #2c3e50; font-size: 16px; }
-        .total-amount { font-weight: 700; color: #e74c3c; font-size: 24px; }
+        .details-title { font-size: 13px; color: #2c3e50; font-weight: 800; margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 20px; }
+        .item-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 14px; color: #555; }
+        .item-name { flex: 1; }
+        .item-price { font-weight: 600; color: #333; }
 
-        .payment-section { margin-top: 30px; }
-        select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 15px; font-size: 14px; }
-        button { width: 100%; padding: 15px; background: #2c3e50; color: white; border: none; font-size: 16px; font-weight: 700; border-radius: 4px; cursor: pointer; transition: 0.2s; }
-        button:hover { background: #1a252f; }
+        .sub-total { text-align: right; font-size: 12px; color: #888; border-bottom: 1px dashed #eee; padding-bottom: 5px; margin-bottom: 5px; }
+
+
+        .total-area { background: #2c3e50; color: white; padding: 20px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; margin-top: 30px; }
+        .total-label { font-weight: 700; font-size: 16px; }
+        .total-amount { font-weight: 800; font-size: 24px; color: #f1c40f; } /* 노란색 포인트 */
+
+        .btn-close {
+            display: block; width: 100%; text-align: center;
+            padding: 15px 0; background: #95a5a6; color: white;
+            text-decoration: none; border-radius: 4px; font-weight: 700; margin-top: 20px;
+            transition: 0.2s;
+        }
+        .btn-close:hover { background: #7f8c8d; }
     </style>
 </head>
 <body>
     <div class="invoice-box">
         <div class="header">
-            <h2>진료비 청구서</h2>
-            <div class="date">{{ record.created_at|date:"Y-m-d H:i" }}</div>
+            <h2>진료비 명세서</h2>
+            <div class="date">NO. {{ record.id }} | {{ record.created_at|date:"Y-m-d H:i" }}</div>
         </div>
 
         <div class="info-group">
             <div class="row">
-                <span class="label">환자명</span>
-                <span class="value">{{ record.appointment.animal.name }}</span>
+                <span class="label">환자명 (품종)</span>
+                <span class="value">{{ record.appointment.animal.name }} <span style="font-weight:400; font-size:12px;">({{ record.appointment.animal.breed }})</span></span>
             </div>
             <div class="row">
                 <span class="label">보호자</span>
                 <span class="value">{{ record.appointment.owner.name }}</span>
             </div>
             <div class="row">
-                <span class="label">담당의</span>
+                <span class="label">담당 수의사</span>
                 <span class="value">{{ record.vet.name }}</span>
             </div>
         </div>
 
-        <div class="divider"></div>
-
-        <div class="items">
-            <div style="font-size: 12px; color: #999; margin-bottom: 10px;">상세 내역</div>
-            {% for detail in record.treatments.all %}
-            <div class="item-row">
-                <span>{{ detail.treatment.name }}</span>
-                <span>{{ detail.treatment.price }}</span>
-            </div>
-            {% empty %}
-            <div class="item-row" style="color:#aaa;">추가 처치 없음</div>
-            {% endfor %}
+        {% if treatments %}
+        <div class="details-title">검사료</div>
+        {% for detail in treatments %}
+        <div class="item-row">
+            <span class="item-name">{{ detail.treatment.name }}</span>
+            <span class="item-price">{{ detail.treatment.price }}</span>
         </div>
+        {% endfor %}
+        <div class="sub-total">소계: {{ treat_total }}원</div>
+        {% endif %}
+
+        {% if vaccines %}
+        <div class="details-title">예방 접종료</div>
+        {% for vac in vaccines %}
+        <div class="item-row">
+            <span class="item-name">{{ vac.vaccine.name }}</span>
+            <span class="item-price">{{ vac.vaccine.price }}</span>
+        </div>
+        {% endfor %}
+        <div class="sub-total">소계: {{ vac_total }}원</div>
+        {% endif %}
+
+        {% if medications %}
+        <div class="details-title">약제비 (원내 처방)</div>
+        {% for med in medications %}
+        <div class="item-row">
+            <span class="item-name">{{ med.medicine.name }} ({{ med.amount }}ea)</span>
+            <span class="item-price">{% widthratio med.medicine.price 1 med.amount %}</span>
+        </div>
+        {% endfor %}
+        <div class="sub-total">소계: {{ med_total }}원</div>
+        {% endif %}
 
         <div class="total-area">
-            <span class="total-label">총 청구액</span>
+            <span class="total-label">청구 금액 합계</span>
             <span class="total-amount">{{ total_cost }}원</span>
         </div>
 
-        <form method="post" class="payment-section">
-            {% csrf_token %}
-            <select name="method">
-                <option value="card">신용카드</option>
-                <option value="cash">현금</option>
-            </select>
-            <button type="submit">결제 승인</button>
-        </form>
+        <a href="{% url 'billing_search' %}?q={{ query }}" class="btn-close">확인 (닫기)</a>
     </div>
 </body>
 </html>

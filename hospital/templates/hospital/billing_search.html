@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>진료비 수납</title>
+    <style>
+        :root {
+            --primary: #2d3436;
+            --border: #b2bec3;
+            --bg-color: #f5f6fa;
+        }
+
+        body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color); margin: 0; padding: 30px; color: #222; }
+        .container { max-width: 1400px; margin: 0 auto; }
+
+
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: white; padding: 25px; border-radius: 6px; border: 1px solid var(--border); }
+        header h1 { margin: 0; font-size: 26px; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
+
+        .btn-home { text-decoration: none; font-size: 14px; color: #636e72; background: white; padding: 10px 20px; border: 1px solid #b2bec3; transition: 0.2s; font-weight: 700; border-radius: 4px; }
+        .btn-home:hover { background: #2d3436; color: white; border-color: #2d3436; }
+
+        .search-section { background: white; padding: 40px; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 15px; margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); border-radius: 4px; }
+        .search-title { font-size: 18px; font-weight: 700; color: #2d3436; margin-bottom: 5px; }
+
+        .search-box-wrapper { display: flex; gap: 10px; }
+        .search-input { width: 400px; padding: 14px 18px; border: 2px solid #dfe6e9; font-size: 16px; outline: none; background-color: #fff; transition: 0.2s; font-weight: 600; border-radius: 4px; }
+        .search-input:focus { border-color: #2d3436; }
+
+        .btn-search { background-color: #2d3436; color: white; border: none; padding: 14px 30px; font-size: 16px; cursor: pointer; font-weight: 700; border-radius: 4px; transition: 0.2s; }
+        .btn-search:hover { background-color: #000; }
+
+        .section { background: white; border: 1px solid var(--border); margin-bottom: 30px; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .section-header { padding: 20px 25px; border-bottom: 1px solid var(--border); font-size: 18px; font-weight: 800; color: var(--primary); background-color: #fff; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 15px; }
+        th { text-align: left; padding: 16px 25px; background-color: #f1f2f6; color: #555; font-weight: 800; border-bottom: 2px solid var(--border); }
+        td { padding: 16px 25px; border-bottom: 1px solid #e1e1e1; color: #2d3436; font-weight: 600; }
+        tr:last-child td { border-bottom: none; }
+
+        .btn-pay {
+            background-color: #c0392b; color: white; text-decoration: none;
+            padding: 8px 16px; border-radius: 4px; font-size: 14px; font-weight: 700; display: inline-block;
+            transition: 0.2s;
+        }
+        .btn-pay:hover { background-color: #a93226; }
+
+        .empty-msg { padding: 60px; text-align: center; color: #b2bec3; font-weight: 500; font-size: 16px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>진료비 수납</h1>
+        <a href="{% url 'dashboard' %}" class="btn-home">메인 화면</a>
+    </header>
+
+    <div class="search-section">
+        <div class="search-title">수납 대상 조회</div>
+        <form method="get" class="search-box-wrapper">
+            <input type="text" name="q" class="search-input" placeholder="보호자 연락처 또는 이름 입력" value="{{ query|default:'' }}">
+            <button type="submit" class="btn-search">조회</button>
+        </form>
+    </div>
+
+    <div class="section">
+        <div class="section-header">미수납 내역</div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 15%;">진료일자</th>
+                    <th style="width: 15%;">환자명</th>
+                    <th style="width: 15%;">보호자</th>
+                    <th>진단명</th>
+                    <th style="width: 15%;">청구 금액</th>
+                    <th style="width: 10%;">수납</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rec in unpaid_records %}
+                <tr>
+                    <td>{{ rec.date|date:"Y-m-d" }}</td>
+                    <td>{{ rec.animal_name }}</td>
+                    <td>{{ rec.owner_name }}</td>
+                    <td>{{ rec.diagnosis }}</td>
+                    <td style="color: #c0392b; font-weight: 800;">{{ rec.total_amount }}원</td>
+                    <td>
+                       <a href="{% url 'billing_process' rec.id %}?q={{ query }}" class="btn-pay">수납액 보기</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="empty-msg">
+                        {% if query %}
+                            "{{ query }}"에 대한 미수납 내역이 없습니다.
+                        {% else %}
+                            보호자 연락처를 입력하여 조회해주세요.
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

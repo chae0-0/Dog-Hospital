@@ -22,13 +22,12 @@
         .nav-group a:last-child { border-radius: 0 6px 6px 0; }
         .nav-group a:hover { background: #2d3436; color: white; border-color: #2d3436; z-index: 1; position: relative; }
 
-        /* 통계 */
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 30px; }
         .stat-card { background: white; padding: 30px; border: 1px solid var(--border); border-top-width: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.04); border-radius: 4px; }
 
         .stat-card.dark { border-top-color: #2d3436; }
         .stat-card.medium { border-top-color: #636e72; }
-        .stat-card.light { border-top-color: #b2bec3; }
 
         .stat-label { font-size: 15px; color: #666; font-weight: 700; margin-bottom: 12px; }
         .stat-value { font-size: 40px; font-weight: 900; color: var(--primary); letter-spacing: -1px; }
@@ -69,7 +68,7 @@
         <h1>강아지 동물병원</h1>
         <div class="nav-group">
             <a href="{% url 'reception_index' %}">원무/접수 데스크</a>
-            <a href="{% url 'inventory_list' %}">자산 및 재고관리</a>
+            <a href="{% url 'billing_search' %}">진료비 수납</a>
         </div>
     </header>
 
@@ -81,10 +80,6 @@
         <div class="stat-card medium">
             <span class="stat-label">진료 완료</span>
             <span class="stat-value">{{ completed_count }}<span class="stat-unit">건</span></span>
-        </div>
-        <div class="stat-card light">
-            <span class="stat-label">예상 매출액</span>
-            <span class="stat-value">{{ total_sales }}<span class="stat-unit">원</span></span>
         </div>
     </div>
 
