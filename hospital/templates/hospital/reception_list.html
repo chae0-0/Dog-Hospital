@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>원무/접수 데스크</title>
+    <style>
+        :root {
+            --primary: #2d3436;
+            --border: #b2bec3;
+            --bg-color: #f5f6fa;
+        }
+        body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color); padding: 30px; margin: 0; color: #222; }
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #dcdcdc; }
+        header h1 { margin: 0; font-size: 26px; color: var(--primary); font-weight: 800; letter-spacing: -0.5px; }
+        .btn-home { text-decoration: none; font-size: 14px; color: #636e72; background: white; padding: 10px 20px; border: 1px solid #b2bec3; transition: 0.2s; font-weight: 700; border-radius: 4px; }
+        .btn-home:hover { background: #2d3436; color: white; border-color: #2d3436; }
+
+        /* 검색 영역 */
+        .search-section { background: white; padding: 30px; border: 1px solid var(--border); display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); border-radius: 4px; }
+        .search-input { width: 350px; padding: 14px 18px; border: 2px solid #dfe6e9; font-size: 15px; outline: none; background-color: #fff; transition: 0.2s; font-weight: 600; border-radius: 4px; }
+        .search-input:focus { border-color: #2d3436; }
+
+        .btn-search { background-color: #2d3436; color: white; border: none; padding: 14px 28px; font-size: 15px; cursor: pointer; font-weight: 700; border-radius: 4px; transition: 0.2s; }
+        .btn-search:hover { background-color: #000; }
+
+        .btn-new { background-color: white; color: #2d3436; border: 2px solid #2d3436; padding: 12px 24px; text-decoration: none; font-size: 15px; font-weight: 700; transition: 0.2s; border-radius: 4px; }
+        .btn-new:hover { background-color: #f1f2f6; }
+
+        /* 결과 테이블 */
+        .result-section { background: white; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; font-size: 15px; }
+        th { background: #f1f2f6; text-align: left; padding: 18px 25px; border-bottom: 2px solid var(--border); color: #555; font-weight: 800; }
+        td { padding: 18px 25px; border-bottom: 1px solid #e1e1e1; color: #2d3436; font-weight: 600; }
+
+
+        .btn-sm { padding: 8px 16px; font-size: 13px; border: 1px solid #b2bec3; background: white; cursor: pointer; color: #636e72; transition: 0.2s; font-weight: 700; border-radius: 4px; }
+        .btn-sm:hover { background: #636e72; color: white; border-color: #636e72; }
+
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(2px); }
+        .modal-window { background: white; width: 550px; border-radius: 8px; box-shadow: 0 15px 40px rgba(0,0,0,0.2); display: flex; flex-direction: column; max-height: 80vh; overflow: hidden; }
+
+        .modal-header { padding: 20px 25px; border-bottom: 2px solid #f1f2f6; display: flex; justify-content: space-between; align-items: center; background: #fff; }
+        .modal-title { font-size: 18px; font-weight: 800; color: #2d3436; }
+        .btn-close { background: none; border: none; font-size: 28px; color: #b2bec3; cursor: pointer; line-height: 1; font-weight: bold; }
+        .btn-close:hover { color: #2d3436; }
+
+        .modal-body { padding: 0; overflow-y: auto; background-color: #fcfcfc; }
+        .history-item { padding: 20px 25px; border-bottom: 1px solid #eee; background: white; }
+        .history-item:last-child { border-bottom: none; }
+
+
+        .history-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .history-date { font-size: 14px; color: #636e72; font-weight: 700; }
+        .history-content { font-size: 16px; font-weight: 800; color: #2d3436; margin-bottom: 4px; }
+        .history-meta { font-size: 13px; color: #999; font-weight: 500; }
+
+
+        .badge {
+            padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 800; color: white; display: inline-block;
+        }
+        .badge-reserved { background-color: #273c75; }    /* 예약중: 파랑 */
+        .badge-waiting { background-color: #dfe6e9; color: #2d3436; border: 1px solid #b2bec3; }  /* 대기중: 밝은회색 */
+        .badge-inprogress { background-color: #c0392b; } /* 진료중: 빨강 */
+        .badge-completed { background-color: #2d3436; }  /* 완료: 검정 */
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>원무/접수 데스크</h1>
+        <a href="{% url 'dashboard' %}" class="btn-home">메인 화면</a>
+    </header>
+
+    <div class="search-section">
+        <form method="get" style="display: flex; gap: -1px;">
+            <input type="text" name="q" class="search-input" placeholder="이름 또는 연락처 검색" value="{{ request.GET.q|default:'' }}">
+            <button type="submit" class="btn-search">조회</button>
+        </form>
+        <div style="width: 20px;"></div>
+        <a href="{% url 'register_new_patient' %}" class="btn-new">+ 신규 환자 등록</a>
+    </div>
+
+    <div class="result-section">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 20%;">보호자</th>
+                    <th style="width: 25%;">연락처</th>
+                    <th>환자 정보</th>
+                    <th style="width: 15%;">관리</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for owner in search_results %}
+                    {% for animal in owner.animals.all %}
+                    <tr>
+                        <td>{{ owner.name }}</td>
+                        <td>{{ owner.phone }}</td>
+                        <td>
+                            <span style="font-weight: 800; font-size: 16px;">{{ animal.name }}</span>
+                            <span style="color:#888; font-size:13px; margin-left: 6px; font-weight: 600;">({{ animal.breed }})</span>
+                        </td>
+                        <td>
+                            <button class="btn-sm" onclick="openModal('modal-{{ animal.id }}')">기록 보기</button>
+                        </td>
+                    </tr>
+
+                    <div id="modal-{{ animal.id }}" class="modal-overlay">
+                        <div class="modal-window">
+                            <div class="modal-header">
+                                <span class="modal-title">{{ animal.name }} 진료 이력</span>
+                                <button class="btn-close" onclick="closeModal('modal-{{ animal.id }}')">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                {% for appt in animal.appointment_set.all|dictsortreversed:"date" %}
+                                    <div class="history-item">
+                                        <div class="history-top">
+                                            <div class="history-date">
+                                                {{ appt.date|date:"Y.m.d" }} <span style="color:#ddd;">|</span> {{ appt.time|time:"A g:i" }}
+                                            </div>
+                                            <div>
+                                                {% if appt.status == 'reserved' %}
+                                                    <span class="badge badge-reserved">예약중</span>
+                                                {% elif appt.status == 'waiting' %}
+                                                    <span class="badge badge-waiting">대기중</span>
+                                                {% elif appt.status == 'in_progress' %}
+                                                    <span class="badge badge-inprogress">진료중</span>
+                                                {% elif appt.status == 'completed' %}
+                                                    <span class="badge badge-completed">진료완료</span>
+                                                {% else %}
+                                                    <span class="badge">{{ appt.get_status_display }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+
+                                        {% if appt.medical_record %}
+                                            <div class="history-content">{{ appt.medical_record.diagnosis }}</div>
+                                        {% else %}
+                                            <div class="history-content" style="color:#999; font-weight:500;">(진단명 없음)</div>
+                                        {% endif %}
+
+                                        <div class="history-meta">담당 수의사: {{ appt.vet.name|default:"-" }}</div>
+                                    </div>
+                                {% empty %}
+                                    <div style="padding: 50px; text-align: center; color: #b2bec3; font-weight: 600;">
+                                        예약 및 진료 기록이 없습니다.
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% empty %}
+                <tr><td colspan="4" style="text-align:center; padding: 50px; color:#b2bec3; font-weight: 600;">검색 결과가 없습니다.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    window.onclick = function(e) { if(e.target.classList.contains('modal-overlay')) e.target.style.display = 'none'; }
+</script>
+</body>
+</html>

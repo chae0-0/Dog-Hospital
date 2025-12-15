@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>진료비 수납</title>
+    <style>
+        body { font-family: 'Pretendard', sans-serif; background: #e0e5ec; height: 100vh; display: flex; justify-content: center; align-items: center; margin: 0; }
+
+        .invoice-box { background: white; width: 400px; padding: 40px; border-radius: 4px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border-top: 5px solid #2c3e50; }
+
+        .header { text-align: center; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px; }
+        .header h2 { margin: 0; font-size: 20px; color: #2c3e50; letter-spacing: 1px; }
+        .date { font-size: 13px; color: #888; margin-top: 8px; }
+
+        .info-group { margin-bottom: 20px; }
+        .row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; }
+        .label { color: #888; }
+        .value { font-weight: 600; color: #333; }
+
+        .divider { border-top: 1px dashed #ddd; margin: 20px 0; }
+
+        .items { margin-bottom: 20px; }
+        .item-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
+
+        .total-area { background: #f8f9fa; padding: 20px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+        .total-label { font-weight: 700; color: #2c3e50; font-size: 16px; }
+        .total-amount { font-weight: 700; color: #e74c3c; font-size: 24px; }
+
+        .payment-section { margin-top: 30px; }
+        select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 15px; font-size: 14px; }
+        button { width: 100%; padding: 15px; background: #2c3e50; color: white; border: none; font-size: 16px; font-weight: 700; border-radius: 4px; cursor: pointer; transition: 0.2s; }
+        button:hover { background: #1a252f; }
+    </style>
+</head>
+<body>
+    <div class="invoice-box">
+        <div class="header">
+            <h2>진료비 청구서</h2>
+            <div class="date">{{ record.created_at|date:"Y-m-d H:i" }}</div>
+        </div>
+
+        <div class="info-group">
+            <div class="row">
+                <span class="label">환자명</span>
+                <span class="value">{{ record.appointment.animal.name }}</span>
+            </div>
+            <div class="row">
+                <span class="label">보호자</span>
+                <span class="value">{{ record.appointment.owner.name }}</span>
+            </div>
+            <div class="row">
+                <span class="label">담당의</span>
+                <span class="value">{{ record.vet.name }}</span>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="items">
+            <div style="font-size: 12px; color: #999; margin-bottom: 10px;">상세 내역</div>
+            {% for detail in record.treatments.all %}
+            <div class="item-row">
+                <span>{{ detail.treatment.name }}</span>
+                <span>{{ detail.treatment.price }}</span>
+            </div>
+            {% empty %}
+            <div class="item-row" style="color:#aaa;">추가 처치 없음</div>
+            {% endfor %}
+        </div>
+
+        <div class="total-area">
+            <span class="total-label">총 청구액</span>
+            <span class="total-amount">{{ total_cost }}원</span>
+        </div>
+
+        <form method="post" class="payment-section">
+            {% csrf_token %}
+            <select name="method">
+                <option value="card">신용카드</option>
+                <option value="cash">현금</option>
+            </select>
+            <button type="submit">결제 승인</button>
+        </form>
+    </div>
+</body>
+</html>

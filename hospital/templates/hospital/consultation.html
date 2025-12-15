@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>진료 차트</title>
+    <style>
+        body { font-family: 'Pretendard', sans-serif; background: #f0f2f5; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+
+        .top-bar { background: #2c3e50; height: 50px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; color: white; }
+        .top-bar h1 { margin: 0; font-size: 16px; font-weight: 600; }
+        .btn-exit { color: #bdc3c7; text-decoration: none; font-size: 13px; padding: 6px 12px; border: 1px solid #7f8c8d; border-radius: 4px; }
+        .btn-exit:hover { color: white; border-color: white; }
+
+
+        .workspace { display: flex; flex: 1; padding: 10px; gap: 10px; overflow: hidden; }
+
+
+        .panel { background: white; border-radius: 4px; border: 1px solid #dcdcdc; display: flex; flex-direction: column; }
+        .panel-header { background: #f8f9fa; padding: 10px 15px; border-bottom: 1px solid #dcdcdc; font-size: 13px; font-weight: 700; color: #555; text-transform: uppercase; }
+        .panel-content { flex: 1; overflow-y: auto; padding: 15px; }
+
+
+        .panel-history { width: 280px; }
+        .history-card { border-left: 3px solid #3498db; background: #fbfbfb; padding: 10px; margin-bottom: 8px; border-radius: 0 4px 4px 0; }
+        .history-date { font-size: 11px; color: #888; margin-bottom: 4px; font-weight: 600; }
+        .history-dx { font-size: 13px; font-weight: 700; color: #333; }
+
+
+        .panel-chart { flex: 1; }
+        .patient-banner { background: #ecf0f1; padding: 12px; border-radius: 4px; margin-bottom: 20px; border: 1px solid #dcdcdc; display: flex; gap: 20px; font-size: 13px; color: #333; }
+        .patient-banner strong { font-weight: 700; color: #2c3e50; font-size: 15px; }
+
+        label { display: block; font-size: 12px; font-weight: 700; color: #555; margin-bottom: 5px; margin-top: 15px; }
+        input[type="text"], input[type="number"], textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 3px; box-sizing: border-box; font-size: 13px; font-family: inherit; }
+        textarea { min-height: 80px; resize: vertical; }
+
+        .btn-save { background: #3498db; color: white; border: none; padding: 12px; width: 100%; font-weight: 700; font-size: 14px; border-radius: 4px; margin-top: 20px; cursor: pointer; }
+        .btn-save:hover { background: #2980b9; }
+
+
+        .panel-order { width: 300px; background: #fafafa; }
+        .empty-state { text-align: center; color: #aaa; font-size: 13px; margin-top: 50px; line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <h1>제1진료실 (담당: {{ appt.vet.name }})</h1>
+        <a href="{% url 'dashboard' %}" class="btn-exit">진료 종료</a>
+    </div>
+
+    <div class="workspace">
+        <div class="panel panel-history">
+            <div class="panel-header">Past History</div>
+            <div class="panel-content">
+                {% for record in history %}
+                <div class="history-card">
+                    <div class="history-date">{{ record.created_at|date:"Y-m-d" }}</div>
+                    <div class="history-dx">{{ record.diagnosis }}</div>
+                    <div style="font-size: 12px; color: #666; margin-top: 2px;">{{ record.symptom|truncatechars:15 }}</div>
+                </div>
+                {% empty %}
+                <div style="text-align:center; font-size:12px; color:#999; padding-top:20px;">기록 없음</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="panel panel-chart">
+            <div class="panel-header">Medical Chart</div>
+            <div class="panel-content">
+                <div class="patient-banner">
+                    <div><span style="color:#7f8c8d;">환자명:</span> <strong>{{ appt.animal.name }}</strong></div>
+                    <div><span style="color:#7f8c8d;">품종:</span> {{ appt.animal.breed }}</div>
+                    <div><span style="color:#7f8c8d;">성별/나이:</span> {{ appt.animal.get_gender_display }} / {{ appt.animal.birth_date }}</div>
+                    <div><span style="color:#7f8c8d;">보호자:</span> {{ appt.owner.name }}</div>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div style="display: flex; gap: 15px;">
+                        <div style="flex: 1;">
+                            <label>체중 (Weight, kg)</label>
+                            {{ record_form.weight }}
+                        </div>
+                        <div style="flex: 1;">
+                            <label>체온 (Temp, ℃)</label>
+                            {{ record_form.temperature }}
+                        </div>
+                    </div>
+
+                    <label>주호소 (Chief Complaint)</label>
+                    {{ record_form.symptom }}
+
+                    <label>진단 (Assessment)</label>
+                    {{ record_form.diagnosis }}
+
+                    <label>계획 및 결과 (Plan & Result)</label>
+                    {{ record_form.test_result }}
+
+                    <button type="submit" class="btn-save">차트 저장 및 오더 생성</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="panel panel-order">
+            <div class="panel-header">Order List</div>
+            <div class="panel-content">
+                <div class="empty-state">
+                    진료 기록을 먼저 저장한 후<br>
+                    상세 화면에서 처방을 입력하세요.
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
