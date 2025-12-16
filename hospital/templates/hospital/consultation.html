@@ -4,63 +4,68 @@
     <meta charset="UTF-8">
     <title>진료 차트</title>
     <style>
-        body { font-family: 'Pretendard', sans-serif; background: #f0f2f5; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        body { font-family: 'Pretendard', sans-serif; background: #dfe6e9; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
+        .top-bar { background: #2d3436; height: 50px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; color: white; border-bottom: 1px solid #636e72; }
+        .patient-info { font-size: 16px; font-weight: 700; }
+        .btn-exit { background: #636e72; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 700; }
 
-        .top-bar { background: #2c3e50; height: 50px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; color: white; }
-        .top-bar h1 { margin: 0; font-size: 16px; font-weight: 600; }
-        .btn-exit { color: #bdc3c7; text-decoration: none; font-size: 13px; padding: 6px 12px; border: 1px solid #7f8c8d; border-radius: 4px; }
-        .btn-exit:hover { color: white; border-color: white; }
-
-
-        .workspace { display: flex; flex: 1; padding: 10px; gap: 10px; overflow: hidden; }
-
-
-        .panel { background: white; border-radius: 4px; border: 1px solid #dcdcdc; display: flex; flex-direction: column; }
-        .panel-header { background: #f8f9fa; padding: 10px 15px; border-bottom: 1px solid #dcdcdc; font-size: 13px; font-weight: 700; color: #555; text-transform: uppercase; }
+        .workspace { display: flex; flex: 1; padding: 10px; gap: 10px; height: calc(100vh - 70px); }
+        .panel { background: white; border-radius: 4px; border: 1px solid #b2bec3; display: flex; flex-direction: column; }
+        .panel-header { background: #f1f2f6; padding: 12px; border-bottom: 1px solid #dcdcdc; font-size: 14px; font-weight: 800; color: #2d3436; }
         .panel-content { flex: 1; overflow-y: auto; padding: 15px; }
 
+        /* 좌측: 과거 이력 */
+        .panel-history { width: 250px; flex-shrink: 0; }
+        .history-card { background: #fdfdfd; border: 1px solid #eee; border-left: 4px solid #b2bec3; padding: 10px; margin-bottom: 8px; }
+        .h-date { font-size: 12px; font-weight: 700; color: #636e72; }
+        .h-dx { font-size: 14px; font-weight: 800; color: #2d3436; margin: 4px 0; }
 
-        .panel-history { width: 280px; }
-        .history-card { border-left: 3px solid #3498db; background: #fbfbfb; padding: 10px; margin-bottom: 8px; border-radius: 0 4px 4px 0; }
-        .history-date { font-size: 11px; color: #888; margin-bottom: 4px; font-weight: 600; }
-        .history-dx { font-size: 13px; font-weight: 700; color: #333; }
+        /* 중앙: 차트 작성 */
+        .panel-chart { flex: 1; min-width: 400px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 700; color: #2980b9; margin-bottom: 5px; }
+        .form-row { display: flex; gap: 10px; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+        textarea.form-control { resize: vertical; min-height: 60px; }
 
+        /* 우측: 오더 */
+        .panel-order { width: 320px; flex-shrink: 0; background: #fafafa; }
+        .order-add-box { background: #e3f2fd; padding: 10px; border-bottom: 1px solid #bbdefb; display: flex; gap: 5px; }
+        .order-select { flex: 1; padding: 8px; border: 1px solid #90caf9; border-radius: 4px; font-size: 13px; }
+        .btn-add { background: #2196f3; color: white; border: none; padding: 0 12px; border-radius: 4px; cursor: pointer; font-weight: 700; font-size: 18px; }
+        .order-list { list-style: none; padding: 0; margin: 0; }
+        .order-item { background: white; border-bottom: 1px solid #eee; padding: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+        .btn-del { color: #e74c3c; background: none; border: none; cursor: pointer; font-weight: 700; }
 
-        .panel-chart { flex: 1; }
-        .patient-banner { background: #ecf0f1; padding: 12px; border-radius: 4px; margin-bottom: 20px; border: 1px solid #dcdcdc; display: flex; gap: 20px; font-size: 13px; color: #333; }
-        .patient-banner strong { font-weight: 700; color: #2c3e50; font-size: 15px; }
-
-        label { display: block; font-size: 12px; font-weight: 700; color: #555; margin-bottom: 5px; margin-top: 15px; }
-        input[type="text"], input[type="number"], textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 3px; box-sizing: border-box; font-size: 13px; font-family: inherit; }
-        textarea { min-height: 80px; resize: vertical; }
-
-        .btn-save { background: #3498db; color: white; border: none; padding: 12px; width: 100%; font-weight: 700; font-size: 14px; border-radius: 4px; margin-top: 20px; cursor: pointer; }
-        .btn-save:hover { background: #2980b9; }
-
-
-        .panel-order { width: 300px; background: #fafafa; }
-        .empty-state { text-align: center; color: #aaa; font-size: 13px; margin-top: 50px; line-height: 1.6; }
+        .action-bar { padding: 10px; background: white; border-top: 1px solid #ddd; text-align: right; }
+        .btn-save { background: #2d3436; color: white; padding: 12px 24px; border: none; border-radius: 4px; font-weight: 700; cursor: pointer; }
+        .btn-finish { background: #c0392b; color: white; padding: 12px 24px; border: none; border-radius: 4px; font-weight: 700; cursor: pointer; margin-left: 10px; }
     </style>
 </head>
 <body>
     <div class="top-bar">
-        <h1>제1진료실 (담당: {{ appt.vet.name }})</h1>
-        <a href="{% url 'dashboard' %}" class="btn-exit">진료 종료</a>
+        <div class="patient-info">
+            {{ appt.animal.name }}
+            <span style="font-size:13px; color:#b2bec3; font-weight:400;">({{ appt.animal.breed }} / {{ appt.animal.get_gender_display }})</span>
+        </div>
+        <button onclick="location.href='{% url 'my_patient_list' %}'" class="btn-exit">나가기</button>
     </div>
 
-    <div class="workspace">
+    <form method="post" class="workspace">
+        {% csrf_token %}
+
         <div class="panel panel-history">
             <div class="panel-header">Past History</div>
             <div class="panel-content">
-                {% for record in history %}
+                {% for history_rec in history %}
                 <div class="history-card">
-                    <div class="history-date">{{ record.created_at|date:"Y-m-d" }}</div>
-                    <div class="history-dx">{{ record.diagnosis }}</div>
-                    <div style="font-size: 12px; color: #666; margin-top: 2px;">{{ record.symptom|truncatechars:15 }}</div>
+                    <div class="h-date">{{ history_rec.created_at|date:"Y-m-d" }}</div>
+                    <div class="h-dx">{{ history_rec.diagnosis }}</div>
+                    <div style="font-size:12px; color:#555;">{{ history_rec.vet.name }}</div>
                 </div>
                 {% empty %}
-                <div style="text-align:center; font-size:12px; color:#999; padding-top:20px;">기록 없음</div>
+                <div style="text-align:center; padding:20px; color:#999; font-size:13px;">이전 기록 없음</div>
                 {% endfor %}
             </div>
         </div>
@@ -68,49 +73,72 @@
         <div class="panel panel-chart">
             <div class="panel-header">Medical Chart</div>
             <div class="panel-content">
-                <div class="patient-banner">
-                    <div><span style="color:#7f8c8d;">환자명:</span> <strong>{{ appt.animal.name }}</strong></div>
-                    <div><span style="color:#7f8c8d;">품종:</span> {{ appt.animal.breed }}</div>
-                    <div><span style="color:#7f8c8d;">성별/나이:</span> {{ appt.animal.get_gender_display }} / {{ appt.animal.birth_date }}</div>
-                    <div><span style="color:#7f8c8d;">보호자:</span> {{ appt.owner.name }}</div>
+                <div class="form-row">
+                    <div class="form-group" style="flex:1;">
+                        <label>체중 (Weight, kg)</label>
+                        {{ record_form.weight }}
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>체온 (Temp, ℃)</label>
+                        {{ record_form.temperature }}
+                    </div>
                 </div>
 
-                <form method="post">
-                    {% csrf_token %}
-                    <div style="display: flex; gap: 15px;">
-                        <div style="flex: 1;">
-                            <label>체중 (Weight, kg)</label>
-                            {{ record_form.weight }}
-                        </div>
-                        <div style="flex: 1;">
-                            <label>체온 (Temp, ℃)</label>
-                            {{ record_form.temperature }}
-                        </div>
-                    </div>
-
-                    <label>주호소 (Chief Complaint)</label>
+                <div class="form-group">
+                    <label>주호소 (Chief Complaint) & 증상</label>
                     {{ record_form.symptom }}
+                </div>
 
-                    <label>진단 (Assessment)</label>
+                <div class="form-group">
+                    <label>진단명 (Assessment)</label>
                     {{ record_form.diagnosis }}
+                </div>
 
-                    <label>계획 및 결과 (Plan & Result)</label>
+                <div class="form-group">
+                    <label>검사 결과 (Test Result & Plan)</label>
                     {{ record_form.test_result }}
+                </div>
 
-                    <button type="submit" class="btn-save">차트 저장 및 오더 생성</button>
-                </form>
+                <div style="text-align:right;">
+                    <button type="submit" name="action" value="save_chart" class="btn-exit" style="background:#0984e3;">중간 저장</button>
+                </div>
             </div>
         </div>
 
         <div class="panel panel-order">
-            <div class="panel-header">Order List</div>
-            <div class="panel-content">
-                <div class="empty-state">
-                    진료 기록을 먼저 저장한 후<br>
-                    상세 화면에서 처방을 입력하세요.
-                </div>
+            <div class="panel-header">Order (진찰료 / 검사 / 치료)</div>
+
+            <div class="order-add-box">
+                <select name="treatment_id" class="order-select">
+                    <option value="">-- 항목 선택 --</option>
+                    {% for item in all_treatments %}
+                        <option value="{{ item.id }}">{{ item.name }} ({{ item.price }}원)</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" name="action" value="add_treatment" class="btn-add">+</button>
+            </div>
+
+            <div class="panel-content" style="padding:0;">
+                <ul class="order-list">
+                    {% for detail in added_treatments %}
+                    <li class="order-item">
+                        <span>{{ detail.treatment.name }}</span>
+                        <div>
+                            <span style="font-size:12px; color:#888; margin-right:5px;">{{ detail.treatment.price }}원</span>
+                            <button type="submit" name="action" value="delete_treatment" class="btn-del" onclick="document.getElementById('del_id').value='{{ detail.id }}'">×</button>
+                        </div>
+                    </li>
+                    {% empty %}
+                    <li style="padding:20px; text-align:center; color:#999; font-size:13px;">추가된 항목이 없습니다.<br>(초진료/재진료 등을 추가하세요)</li>
+                    {% endfor %}
+                </ul>
+                <input type="hidden" name="detail_id" id="del_id">
+            </div>
+
+            <div class="action-bar">
+                <button type="submit" name="action" value="finish" class="btn-finish">진료 완료 (저장)</button>
             </div>
         </div>
-    </div>
+    </form>
 </body>
 </html>

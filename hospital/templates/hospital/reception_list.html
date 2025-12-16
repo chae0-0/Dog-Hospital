@@ -4,11 +4,7 @@
     <meta charset="UTF-8">
     <title>원무/접수 데스크</title>
     <style>
-        :root {
-            --primary: #2d3436;
-            --border: #b2bec3;
-            --bg-color: #f5f6fa;
-        }
+        :root { --primary: #2d3436; --border: #b2bec3; --bg-color: #f5f6fa; }
         body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color); padding: 30px; margin: 0; color: #222; }
         .container { max-width: 1200px; margin: 0 auto; }
 
@@ -68,12 +64,15 @@
 <div class="container">
     <header>
         <h1>원무/접수 데스크</h1>
-        <a href="{% url 'dashboard' %}" class="btn-home">메인 화면</a>
+        <div class="nav-group">
+            <a href="{% url 'dashboard' %}" class="btn-home">메인 화면</a>
+            <a href="{% url 'billing_search' %}" class="btn-home">진료비 수납</a>
+        </div>
     </header>
 
     <div class="section-box">
         <div class="section-header">
-            <span>📅 오늘의 예약 스케줄 ({{ today_appointments.count }}건)</span>
+            <span>오늘의 예약 스케줄 ({{ today_appointments.count }}건)</span>
         </div>
         <table>
             <thead>
@@ -162,11 +161,31 @@
                                             <div style="font-size:15px; font-weight:800; color:#2d3436; margin-bottom:5px;">
                                                 진단: {{ appt.medical_record.diagnosis }}
                                             </div>
+
+                                            {% if appt.medical_record.vaccinations.exists %}
+                                            <div class="history-section">
+                                                <div class="history-section-title">백신 접종</div>
+                                                {% for vac in appt.medical_record.vaccinations.all %}
+                                                    <div class="history-text">- {{ vac.vaccine.name }}</div>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+
+                                            {% if appt.medical_record.treatments.exists %}
+                                            <div class="history-section">
+                                                <div class="history-section-title">치료/처방</div>
+                                                {% for treat in appt.medical_record.treatments.all %}
+                                                    <div class="history-text">- {{ treat.treatment.name }}</div>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+
                                             {% if appt.medical_record.symptom %}
                                             <div style="margin-top:8px; font-size:13px; color:#555;">
                                                 <span style="font-weight:bold;">증상/메모:</span> {{ appt.medical_record.symptom }}
                                             </div>
                                             {% endif %}
+
                                         {% else %}
                                             <div style="color:#aaa; font-size:13px;">진료 기록이 생성되지 않았습니다.</div>
                                         {% endif %}

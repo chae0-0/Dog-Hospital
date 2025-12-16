@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>내 진료실</title>
+    <style>
+        :root { --primary: #2d3436; --border: #b2bec3; --bg-color: #f5f6fa; }
+        body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color); margin: 0; padding: 30px; color: #222; }
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: white; padding: 25px; border-radius: 6px; border: 1px solid var(--border); }
+        header h1 { margin: 0; font-size: 24px; font-weight: 800; color: var(--primary); }
+        .nav-btn { text-decoration: none; color: #555; font-weight: 700; padding: 10px 15px; border: 1px solid #ddd; background: white; border-radius: 4px; margin-left: 5px; }
+
+        .section-title { font-size: 18px; font-weight: 700; color: var(--primary); margin: 30px 0 15px 0; border-left: 5px solid #3498db; padding-left: 10px; }
+        .list-box { background: white; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f1f2f6; padding: 15px; text-align: left; border-bottom: 2px solid var(--border); color: #555; font-weight: 700; }
+        td { padding: 15px; border-bottom: 1px solid #eee; color: #333; }
+
+        .btn-call { background: #c0392b; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block; font-size: 13px; }
+        .btn-call:hover { background: #a93226; }
+
+        .btn-view { background: #95a5a6; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: 600; cursor: pointer; text-decoration: none; font-size: 12px; }
+        .btn-view:hover { background: #7f8c8d; }
+
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 800; display: inline-block; }
+        .badge-waiting { background: #ffeaa7; color: #d35400; }
+        .badge-inprogress { background: #fab1a0; color: #c0392b; }
+        .badge-completed { background: #dfe6e9; color: #636e72; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>{{ request.session.vet_name }} 수의사님의 진료실</h1>
+        <div>
+            <a href="{% url 'inventory_list' %}" class="nav-btn">재고관리</a>
+            <a href="{% url 'dashboard' %}" class="nav-btn">메인 화면</a>
+        </div>
+    </header>
+
+    <div class="section-title">현재 대기 / 진료 중</div>
+    <div class="list-box">
+        <table>
+            <thead>
+                <tr>
+                    <th>시간</th>
+                    <th>환자명 (품종)</th>
+                    <th>보호자</th>
+                    <th>상태</th>
+                    <th>액션</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appt in my_patients %}
+                <tr style="background-color: #fffcf5;">
+                    <td>{{ appt.time|time:"A g:i" }}</td>
+                    <td><strong>{{ appt.animal.name }}</strong> <span style="font-size:13px; color:#888;">({{ appt.animal.breed }})</span></td>
+                    <td>{{ appt.owner.name }}</td>
+                    <td>
+                        {% if appt.status == 'waiting' %}<span class="badge badge-waiting">대기중</span>
+                        {% else %}<span class="badge badge-inprogress">진료중</span>{% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'consultation_room' appt.id %}" class="btn-call">
+                            {% if appt.status == 'waiting' %}진료 시작 (호출){% else %}차트 작성 계속{% endif %}
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" style="text-align: center; padding: 40px; color: #999;">현재 대기 중인 환자가 없습니다.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section-title">최근 완료된 진료 (히스토리)</div>
+    <div class="list-box">
+        <table>
+            <thead>
+                <tr>
+                    <th>진료 날짜</th>
+                    <th>환자명</th>
+                    <th>진단명</th>
+                    <th>상태</th>
+                    <th>관리</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appt in history_list %}
+                <tr>
+                    <td>{{ appt.date|date:"Y-m-d" }}</td>
+                    <td>{{ appt.animal.name }}</td>
+                    <td>
+                        {% if appt.medical_record %}
+                            {{ appt.medical_record.diagnosis|default:"(진단명 없음)" }}
+                        {% else %} - {% endif %}
+                    </td>
+                    <td><span class="badge badge-completed">진료완료</span></td>
+                    <td>
+                        <a href="{% url 'consultation_room' appt.id %}" class="btn-view">차트 조회</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" style="text-align: center; padding: 30px; color: #b2bec3;">최근 진료 기록이 없습니다.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

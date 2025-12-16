@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 로그인</title>
+    <style>
+        body { font-family: 'Pretendard', sans-serif; background: #f5f6fa; height: 100vh; display: flex; justify-content: center; align-items: center; margin: 0; }
+        .login-box { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 350px; text-align: center; border: 1px solid #dcdcdc; }
+        h2 { margin: 0 0 20px 0; color: #2d3436; }
+        input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #2d3436; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        button:hover { background: #000; }
+        .error { color: red; font-size: 13px; margin-bottom: 15px; }
+        .home-link { display: block; margin-top: 15px; font-size: 13px; color: #666; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h2>의료진 로그인</h2>
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <input type="text" name="phone" placeholder="등록된 휴대폰 번호 입력 (-포함)" required>
+            <button type="submit">로그인</button>
+        </form>
+        <a href="{% url 'dashboard' %}" class="home-link">← 메인으로 돌아가기</a>
+    </div>
+</body>
+</html>

@@ -4,44 +4,38 @@
     <meta charset="UTF-8">
     <title>자산 및 재고 관리</title>
     <style>
-        :root {
-            --primary: #2d3436;
-            --border: #b2bec3;
-            --bg-color: #f5f6fa;
-        }
-
-        body { font-family: 'Pretendard', 'Malgun Gothic', sans-serif; background-color: var(--bg-color); margin: 0; padding: 30px; color: #222; }
+        :root { --primary: #2d3436; --border: #b2bec3; --bg-color: #f5f6fa; }
+        body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color); margin: 0; padding: 30px; color: #222; }
         .container { max-width: 1400px; margin: 0 auto; }
 
-
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: white; padding: 25px; border-radius: 6px; border: 1px solid var(--border); }
-        header h1 { margin: 0; font-size: 26px; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
+        header h1 { margin: 0; font-size: 26px; font-weight: 800; color: var(--primary); }
+        .btn-home { text-decoration: none; font-size: 14px; color: #636e72; background: white; padding: 10px 20px; border: 1px solid #b2bec3; font-weight: 700; border-radius: 4px; }
 
-        .btn-home { text-decoration: none; font-size: 14px; color: #636e72; background: white; padding: 10px 20px; border: 1px solid #b2bec3; transition: 0.2s; font-weight: 700; border-radius: 4px; }
-        .btn-home:hover { background: #2d3436; color: white; border-color: #2d3436; }
-
-
-        .section { background: white; border: 1px solid var(--border); margin-bottom: 30px; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .section-header { padding: 20px 25px; border-bottom: 1px solid var(--border); font-size: 18px; font-weight: 800; color: var(--primary); background-color: #fff; display: flex; justify-content: space-between; align-items: center; }
-
+        .section { background: white; border: 1px solid var(--border); margin-bottom: 40px; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .section-header { padding: 20px 25px; border-bottom: 1px solid var(--border); font-size: 18px; font-weight: 800; color: var(--primary); background-color: #fdfdfd; display: flex; justify-content: space-between; align-items: center; }
 
         table { width: 100%; border-collapse: collapse; font-size: 15px; }
-        th { text-align: left; padding: 16px 25px; background-color: #f1f2f6; color: #555; font-weight: 800; border-bottom: 2px solid var(--border); }
-        td { padding: 16px 25px; border-bottom: 1px solid #e1e1e1; color: #2d3436; font-weight: 600; }
-        tr:last-child td { border-bottom: none; }
+        th { text-align: left; padding: 15px 25px; background-color: #f1f2f6; color: #555; font-weight: 800; border-bottom: 2px solid var(--border); }
+        td { padding: 15px 25px; border-bottom: 1px solid #e1e1e1; color: #2d3436; font-weight: 600; vertical-align: middle; }
 
-        /* 재고 상태 */
-        .stock-badge {
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 13px;
-            font-weight: 800;
-            display: inline-block;
-        }
-        .stock-low { background-color: #fab1a0; color: #c0392b; } /* 부족: 연한 빨강 배경 + 진한 빨강 글씨 */
-        .stock-ok { background-color: #dfe6e9; color: #2d3436; }  /* 정상: 회색 */
+        .stock-badge { padding: 6px 12px; border-radius: 4px; font-size: 13px; font-weight: 800; display: inline-block; }
+        .stock-low { background-color: #fab1a0; color: #c0392b; }
+        .stock-ok { background-color: #dfe6e9; color: #2d3436; }
 
-        .code-tag { font-family: 'Consolas', monospace; background: #eee; padding: 4px 8px; border-radius: 4px; font-size: 14px; color: #555; }
+        .status-normal { background: #55efc4; color: #00b894; padding: 5px 10px; border-radius: 4px; font-size: 13px; font-weight: 800; }
+        .status-broken { background: #ff7675; color: #d63031; padding: 5px 10px; border-radius: 4px; font-size: 13px; font-weight: 800; }
+        .status-repairing { background: #ffeaa7; color: #fdcb6e; padding: 5px 10px; border-radius: 4px; font-size: 13px; font-weight: 800; }
+
+        .btn-action { background: #2d3436; color: white; border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: 700; font-size: 13px; }
+        .btn-add-vendor { background: #0984e3; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: 700; }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-window { background: white; width: 400px; padding: 30px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .modal-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; display: block; }
+        input[type="number"], input[type="text"], select { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .btn-submit { width: 100%; padding: 12px; background: #2c3e50; color: white; border: none; font-weight: 700; cursor: pointer; border-radius: 4px; }
+        .btn-close { background: none; border: none; float: right; font-size: 20px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -52,30 +46,83 @@
     </header>
 
     <div class="section">
-        <div class="section-header">의약품 재고 현황</div>
+        <div class="section-header">의약품 재고</div>
         <table>
             <thead>
                 <tr>
-                    <th style="width: 25%;">약품명</th>
-                    <th style="width: 20%;">제조사</th>
-                    <th style="width: 20%;">유통기한</th>
-                    <th style="width: 15%;">단위</th>
-                    <th style="width: 20%;">재고량</th>
+                    <th>약품명</th><th>제조사</th><th>단위</th><th>현재고</th><th>관리</th>
                 </tr>
             </thead>
             <tbody>
                 {% for med in medicines %}
                 <tr>
-                    <td style="font-size: 16px; font-weight: 800;">{{ med.name }}</td>
-                    <td>{{ med.manufacturer }}</td>
-                    <td>{{ med.expiry_date }}</td>
-                    <td>{{ med.unit }}</td>
+                    <td>{{ med.name }}</td><td>{{ med.manufacturer }}</td><td>{{ med.unit }}</td>
                     <td>
-                        {% if med.stock < 10 %}
-                            <span class="stock-badge stock-low">부족 ({{ med.stock }})</span>
-                        {% else %}
-                            <span class="stock-badge stock-ok">{{ med.stock }}</span>
+                        {% if med.stock < 10 %} <span class="stock-badge stock-low">부족 ({{ med.stock }})</span>
+                        {% else %} <span class="stock-badge stock-ok">{{ med.stock }}</span> {% endif %}
+                    </td>
+                    <td><button class="btn-action" onclick="openRestockModal('restock_med', '{{ med.id }}', '{{ med.name }}')">입고 (+)</button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-header">의료용 소모품 (주사기/붕대 등)</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>품명</th><th>거래처</th><th>단위</th><th>현재고</th><th>관리</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in consumables %}
+                <tr>
+                    <td>{{ item.name }}</td><td>{{ item.vendor.name|default:"-" }}</td><td>{{ item.unit }}</td>
+                    <td>
+                        {% if item.stock < 20 %} <span class="stock-badge stock-low">부족 ({{ item.stock }})</span>
+                        {% else %} <span class="stock-badge stock-ok">{{ item.stock }}</span> {% endif %}
+                    </td>
+                    <td><button class="btn-action" onclick="openRestockModal('restock_consumable', '{{ item.id }}', '{{ item.name }}')">입고 (+)</button></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" style="text-align:center; padding: 20px; color:#999;">등록된 소모품이 없습니다.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-header">의료기기 현황 (X-ray, 초음파 등)</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>기구명</th><th>관리코드</th><th>상태</th><th>상태 변경</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tool in tools %}
+                <tr>
+                    <td>{{ tool.name }}</td>
+                    <td><span style="font-family:monospace; background:#eee; padding:2px 6px;">{{ tool.code }}</span></td>
+                    <td>
+                        {% if tool.status == 'normal' %}<span class="status-normal">정상 작동</span>
+                        {% elif tool.status == 'broken' %}<span class="status-broken">고장</span>
+                        {% elif tool.status == 'repairing' %}<span class="status-repairing">수리중</span>
                         {% endif %}
+                    </td>
+                    <td>
+                        <form method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="update_tool_status">
+                            <input type="hidden" name="item_id" value="{{ tool.id }}">
+                            <select name="status" onchange="this.form.submit()" style="width: auto; margin:0; padding:6px;">
+                                <option value="normal" {% if tool.status == 'normal' %}selected{% endif %}>정상</option>
+                                <option value="broken" {% if tool.status == 'broken' %}selected{% endif %}>고장 신고</option>
+                                <option value="repairing" {% if tool.status == 'repairing' %}selected{% endif %}>수리중</option>
+                            </select>
+                        </form>
                     </td>
                 </tr>
                 {% endfor %}
@@ -84,28 +131,79 @@
     </div>
 
     <div class="section">
-        <div class="section-header">의료기구 및 소모품</div>
+        <div class="section-header">
+            <span>거래처 관리</span>
+            <button class="btn-add-vendor" onclick="openVendorModal()">+ 거래처 등록</button>
+        </div>
         <table>
             <thead>
                 <tr>
-                    <th style="width: 25%;">기구명</th>
-                    <th style="width: 20%;">제조사</th>
-                    <th style="width: 20%;">관리코드</th>
-                    <th style="width: 35%;">보유 수량</th>
+                    <th>업체명</th><th>연락처</th><th>주요 납품 품목</th>
                 </tr>
             </thead>
             <tbody>
-                {% for tool in tools %}
+                {% for v in vendors %}
                 <tr>
-                    <td style="font-size: 16px; font-weight: 800;">{{ tool.name }}</td>
-                    <td>{{ tool.manufacturer }}</td>
-                    <td><span class="code-tag">{{ tool.code }}</span></td>
-                    <td style="font-weight: 800; font-size: 16px;">{{ tool.stock }}</td>
+                    <td>{{ v.name }}</td><td>{{ v.contact }}</td><td>{{ v.item_type }}</td>
                 </tr>
+                {% empty %}
+                <tr><td colspan="3" style="text-align:center; padding: 20px; color:#999;">등록된 거래처가 없습니다.</td></tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
+
+<div id="restockModal" class="modal-overlay">
+    <div class="modal-window">
+        <button class="btn-close" onclick="closeModal('restockModal')">&times;</button>
+        <span class="modal-title">재고 입고 처리</span>
+        <p id="restockItemName" style="font-weight:bold; color:#2d3436; margin-bottom:20px;"></p>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" id="restockAction">
+            <input type="hidden" name="item_id" id="restockItemId">
+            <label>추가 입고 수량</label>
+            <input type="number" name="amount" min="1" value="10" required>
+            <button type="submit" class="btn-submit">입고 확인</button>
+        </form>
+    </div>
+</div>
+
+<div id="vendorModal" class="modal-overlay">
+    <div class="modal-window">
+        <button class="btn-close" onclick="closeModal('vendorModal')">&times;</button>
+        <span class="modal-title">새 거래처 등록</span>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add_vendor">
+            <label>업체명</label>
+            <input type="text" name="name" required>
+            <label>연락처</label>
+            <input type="text" name="contact" placeholder="010-0000-0000" required>
+            <label>주요 품목</label>
+            <input type="text" name="item_type" placeholder="예: 소모품, 약품">
+            <button type="submit" class="btn-submit">등록 완료</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openRestockModal(action, id, name) {
+        document.getElementById('restockAction').value = action;
+        document.getElementById('restockItemId').value = id;
+        document.getElementById('restockItemName').innerText = "품목: " + name;
+        document.getElementById('restockModal').style.display = 'flex';
+    }
+    function openVendorModal() {
+        document.getElementById('vendorModal').style.display = 'flex';
+    }
+    function closeModal(id) {
+        document.getElementById(id).style.display = 'none';
+    }
+    window.onclick = function(e) {
+        if(e.target.classList.contains('modal-overlay')) e.target.style.display = 'none';
+    }
+</script>
 </body>
 </html>
