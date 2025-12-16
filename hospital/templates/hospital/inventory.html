@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>자산 및 재고 관리</title>
+    <style>
+        :root {
+            --primary: #2d3436;
+            --border: #b2bec3;
+            --bg-color: #f5f6fa;
+        }
+
+        body { font-family: 'Pretendard', 'Malgun Gothic', sans-serif; background-color: var(--bg-color); margin: 0; padding: 30px; color: #222; }
+        .container { max-width: 1400px; margin: 0 auto; }
+
+
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: white; padding: 25px; border-radius: 6px; border: 1px solid var(--border); }
+        header h1 { margin: 0; font-size: 26px; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
+
+        .btn-home { text-decoration: none; font-size: 14px; color: #636e72; background: white; padding: 10px 20px; border: 1px solid #b2bec3; transition: 0.2s; font-weight: 700; border-radius: 4px; }
+        .btn-home:hover { background: #2d3436; color: white; border-color: #2d3436; }
+
+
+        .section { background: white; border: 1px solid var(--border); margin-bottom: 30px; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .section-header { padding: 20px 25px; border-bottom: 1px solid var(--border); font-size: 18px; font-weight: 800; color: var(--primary); background-color: #fff; display: flex; justify-content: space-between; align-items: center; }
+
+
+        table { width: 100%; border-collapse: collapse; font-size: 15px; }
+        th { text-align: left; padding: 16px 25px; background-color: #f1f2f6; color: #555; font-weight: 800; border-bottom: 2px solid var(--border); }
+        td { padding: 16px 25px; border-bottom: 1px solid #e1e1e1; color: #2d3436; font-weight: 600; }
+        tr:last-child td { border-bottom: none; }
+
+        /* 재고 상태 */
+        .stock-badge {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 800;
+            display: inline-block;
+        }
+        .stock-low { background-color: #fab1a0; color: #c0392b; } /* 부족: 연한 빨강 배경 + 진한 빨강 글씨 */
+        .stock-ok { background-color: #dfe6e9; color: #2d3436; }  /* 정상: 회색 */
+
+        .code-tag { font-family: 'Consolas', monospace; background: #eee; padding: 4px 8px; border-radius: 4px; font-size: 14px; color: #555; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>자산 및 재고 관리</h1>
+        <a href="{% url 'dashboard' %}" class="btn-home">메인 화면</a>
+    </header>
+
+    <div class="section">
+        <div class="section-header">의약품 재고 현황</div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 25%;">약품명</th>
+                    <th style="width: 20%;">제조사</th>
+                    <th style="width: 20%;">유통기한</th>
+                    <th style="width: 15%;">단위</th>
+                    <th style="width: 20%;">재고량</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for med in medicines %}
+                <tr>
+                    <td style="font-size: 16px; font-weight: 800;">{{ med.name }}</td>
+                    <td>{{ med.manufacturer }}</td>
+                    <td>{{ med.expiry_date }}</td>
+                    <td>{{ med.unit }}</td>
+                    <td>
+                        {% if med.stock < 10 %}
+                            <span class="stock-badge stock-low">부족 ({{ med.stock }})</span>
+                        {% else %}
+                            <span class="stock-badge stock-ok">{{ med.stock }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-header">의료기구 및 소모품</div>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 25%;">기구명</th>
+                    <th style="width: 20%;">제조사</th>
+                    <th style="width: 20%;">관리코드</th>
+                    <th style="width: 35%;">보유 수량</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tool in tools %}
+                <tr>
+                    <td style="font-size: 16px; font-weight: 800;">{{ tool.name }}</td>
+                    <td>{{ tool.manufacturer }}</td>
+                    <td><span class="code-tag">{{ tool.code }}</span></td>
+                    <td style="font-weight: 800; font-size: 16px;">{{ tool.stock }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
